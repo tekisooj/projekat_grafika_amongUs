@@ -168,8 +168,6 @@ int main() {
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
 
-    // build and compile shaders
-    // -------------------------
     Shader modelShader("resources/shaders/2.model_lighting.vs", "resources/shaders/2.model_lighting.fs");
     Shader cubemapShader("resources/shaders/cubemap.vs", "resources/shaders/cubemap.fs");
     Shader lightingShader("resources/shaders/multiple_lights.vs", "resources/shaders/multiple_lights.fs");
@@ -181,8 +179,6 @@ int main() {
     //    Shader planetShader("resources/shaders/planet.vs", "resources/shaders/planet.fs");
 
 
-    // load models
-    // -----------
     Model ourModel("resources/objects/amongUsWhite/among us leon.obj");
     ourModel.SetShaderTextureNamePrefix("material.");
 
@@ -192,31 +188,27 @@ int main() {
     unsigned int amount = 100000;
     glm::mat4* modelMatrices;
     modelMatrices = new glm::mat4[amount];
-    srand(glfwGetTime()); // initialize random seed
+    srand(glfwGetTime());
     float radius = 150.0;
     float offset = 25.0f;
     for (unsigned int i = 0; i < amount; i++)
     {
         glm::mat4 model = glm::mat4(1.0f);
-        // 1. translation: displace along circle with 'radius' in range [-offset, offset]
         float angle = (float)i / (float)amount * 360.0f;
         float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
         float x = sin(angle) * radius + displacement;
         displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-        float y = displacement * 0.4f; // keep height of asteroid field smaller compared to width of x and z
+        float y = displacement * 0.4f;
         displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
         float z = cos(angle) * radius + displacement;
         model = glm::translate(model, glm::vec3(x, y, z));
 
-        // 2. scale: Scale between 0.05 and 0.25f
         float scale = (rand() % 20) / 100.0f + 0.05;
         model = glm::scale(model, glm::vec3(scale));
 
-        // 3. rotation: add random rotation around a (semi)randomly picked rotation axis vector
         float rotAngle = (rand() % 360);
         model = glm::rotate(model, rotAngle, glm::vec3(0.4f, 0.6f, 0.8f));
 
-        // 4. now add to list of matrices
         modelMatrices[i] = model;
     }
 
@@ -230,7 +222,6 @@ int main() {
     {
         unsigned int VAO = rock.meshes[i].VAO;
         glBindVertexArray(VAO);
-        // set attribute pointers for matrix (4 times vec4)
         glEnableVertexAttribArray(3);
         glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
         glEnableVertexAttribArray(4);
@@ -252,7 +243,6 @@ int main() {
 
 //
 //    float cubeVertices[] = {
-//            // positions          // texture Coords
 //            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 //            0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
 //            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
@@ -296,7 +286,6 @@ int main() {
 //            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 //    };
     float skyboxVertices[] = {
-            // positions
             -1.0f,  1.0f, -1.0f,
             -1.0f, -1.0f, -1.0f,
             1.0f, -1.0f, -1.0f,
@@ -341,11 +330,8 @@ int main() {
     };
 
 
-    // za light cubes
-
-
     float vertices[] = {
-            // positions          // normals           // texture coords
+            // pozicije          // normale           // koordinate teksture
             -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
             0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
             0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
@@ -388,24 +374,21 @@ int main() {
             -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
             -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
     };
-    // positions all containers
-    glm::vec3 cubePositions[] = {
-            glm::vec3( 0.8f,  1.0f,  0.0f),
-            glm::vec3(-1.5f, -2.2f, -2.5f),
-            glm::vec3( 1.0f, -1.0f, -2.5f),
-            glm::vec3( 1.3f, -2.0f, -2.5f),
-            glm::vec3( 1.5f,  2.0f, -2.5f),
-            glm::vec3( 1.5f,  0.2f, -1.5f),
-            glm::vec3(-1.3f,  1.0f, -1.5f)
-    };
-    // positions of the point lights
+//    glm::vec3 cubePositions[] = {
+//            glm::vec3( 0.8f,  1.0f,  0.0f),
+//            glm::vec3(-1.5f, -2.2f, -2.5f),
+//            glm::vec3( 1.0f, -1.0f, -2.5f),
+//            glm::vec3( 1.3f, -2.0f, -2.5f),
+//            glm::vec3( 1.5f,  2.0f, -2.5f),
+//            glm::vec3( 1.5f,  0.2f, -1.5f),
+//            glm::vec3(-1.3f,  1.0f, -1.5f)
+//    };
     glm::vec3 pointLightPositions[] = {
             glm::vec3( 4.7f,  1.2f,  2.0f),
             glm::vec3( 2.3f, -3.3f, -4.0f),
             glm::vec3(-6.0f,  3.0f, -11.0f),
             glm::vec3( 0.0f,  0.0f, -3.0f)
     };
-    // first, configure the cube's VAO (and VBO)
     unsigned int cubeVBO, cubeVAO;
     glGenVertexArrays(1, &cubeVAO);
     glGenBuffers(1, &cubeVBO);
@@ -421,23 +404,17 @@ int main() {
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
-    // second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
     unsigned int lightCubeVAO;
     glGenVertexArrays(1, &lightCubeVAO);
     glBindVertexArray(lightCubeVAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-    // note that we update the lamp's position attribute's stride to reflect the updated buffer data
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    // load textures (we now use a utility function to keep the code more organized)
-    // -----------------------------------------------------------------------------
     unsigned int diffuseMap = loadTexture(FileSystem::getPath("resources/textures/container.jpg").c_str());
     unsigned int specularMap = loadTexture(FileSystem::getPath("resources/textures/container2_specular.png").c_str());
 
-    // cubemapShader configuration
-    // --------------------
     lightingShader.use();
     lightingShader.setInt("material.diffuse", 0);
     lightingShader.setInt("material.specular", 1);
@@ -485,29 +462,22 @@ int main() {
 
 
 
-    // draw in wireframe
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    // render loop
-    // -----------
+
     while (!glfwWindowShouldClose(window)) {
-        // per-frame time logic
-        // --------------------
+
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        // input
-        // -----
+
         processInput(window);
 
 
-        // render
-        // ------
         glClearColor(programState->clearColor.r, programState->clearColor.g, programState->clearColor.b, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        //asteroidi
+        //asteroidi i planeta
 
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
         glm::mat4 view = programState->camera.GetViewMatrix();
@@ -522,16 +492,14 @@ int main() {
         geometryShader.setMat4("view", view);
         geometryShader.setMat4("model", model);
 
-        // add time component to geometry shader in the form of a uniform
         geometryShader.setFloat("time", glfwGetTime());
 
-        // draw model
         planet.Draw(geometryShader);
-        // draw meteorites
+
         asteroidShader.use();
         asteroidShader.setInt("texture_diffuse1", 0);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, rock.textures_loaded[0].id); // note: we also made the textures_loaded vector public (instead of private) from the model class.
+        glBindTexture(GL_TEXTURE_2D, rock.textures_loaded[0].id);
         for (unsigned int i = 0; i < rock.meshes.size(); i++)
         {
             glBindVertexArray(rock.meshes[i].VAO);
@@ -546,18 +514,13 @@ int main() {
         lightingShader.setVec3("viewPos", programState->camera.Position);
         lightingShader.setFloat("material.shininess", 32.0f);
 
-        /*
-           Here we set all the uniforms for the 5/6 types of lights we have. We have to set them manually and index
-           the proper PointLight struct in the array to set each uniform variable. This can be done more code-friendly
-           by defining light types as classes and set their values in there, or by using a more efficient uniform approach
-           by using 'Uniform buffer objects', but that is something we'll discuss in the 'Advanced GLSL' tutorial.
-        */
-        // directional light
+
         lightingShader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
         lightingShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
         lightingShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
         lightingShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
-        // point light 1
+
+
         lightingShader.setVec3("pointLights[0].position", pointLightPositions[0]);
         lightingShader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
         lightingShader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
@@ -565,7 +528,8 @@ int main() {
         lightingShader.setFloat("pointLights[0].constant", 1.0f);
         lightingShader.setFloat("pointLights[0].linear", 0.09);
         lightingShader.setFloat("pointLights[0].quadratic", 0.032);
-        // point light 2
+
+
         lightingShader.setVec3("pointLights[1].position", pointLightPositions[1]);
         lightingShader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
         lightingShader.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
@@ -573,7 +537,8 @@ int main() {
         lightingShader.setFloat("pointLights[1].constant", 1.0f);
         lightingShader.setFloat("pointLights[1].linear", 0.09);
         lightingShader.setFloat("pointLights[1].quadratic", 0.032);
-        // point light 3
+
+
         lightingShader.setVec3("pointLights[2].position", pointLightPositions[2]);
         lightingShader.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
         lightingShader.setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
@@ -581,7 +546,8 @@ int main() {
         lightingShader.setFloat("pointLights[2].constant", 1.0f);
         lightingShader.setFloat("pointLights[2].linear", 0.09);
         lightingShader.setFloat("pointLights[2].quadratic", 0.032);
-        // point light 4
+
+
         lightingShader.setVec3("pointLights[3].position", pointLightPositions[3]);
         lightingShader.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
         lightingShader.setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
@@ -589,7 +555,8 @@ int main() {
         lightingShader.setFloat("pointLights[3].constant", 1.0f);
         lightingShader.setFloat("pointLights[3].linear", 0.09);
         lightingShader.setFloat("pointLights[3].quadratic", 0.032);
-        // spotLight
+
+
         lightingShader.setVec3("spotLight.position", programState->camera.Position);
         lightingShader.setVec3("spotLight.direction", programState->camera.Front);
         lightingShader.setVec3("spotLight.ambient", 0.5f, 0.5f, 0.5f);
@@ -601,29 +568,29 @@ int main() {
         lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
         lightingShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
-        // view/projection transformations
+
         projection = glm::perspective(glm::radians(programState->camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         view = programState->camera.GetViewMatrix();
         lightingShader.setMat4("projection", projection);
         lightingShader.setMat4("view", view);
 
-        // world transformation
+
         glm::mat4 model1 = glm::mat4(1.0f);
         lightingShader.setMat4("model", model1);
 
-        // bind diffuse map
+
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, diffuseMap);
-        // bind specular map
+
+
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, specularMap);
 
-        // render containers
+
 //        glBindVertexArray(cubeVAO);
 //        for (unsigned int i = 0; i < 7; i++)
 //        {
-//            // calculate the model matrix for each object and pass it to cubemapShader before drawing
-//            glm::mat4 model = glm::mat4(1.0f);
+//             glm::mat4 model = glm::mat4(1.0f);
 //            model = glm::translate(model, cubePositions[i]*8.0f);
 //            float angle = 20.0f * i;
 //            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
@@ -633,27 +600,23 @@ int main() {
 //            glDrawArrays(GL_TRIANGLES, 0, 36);
 //        }
 
-        // also draw the lamp object(s)
         lightCubeShader.use();
         lightCubeShader.setMat4("projection", projection);
         lightCubeShader.setMat4("view", view);
 
-        // we now draw as many light bulbs as we have point lights.
         glBindVertexArray(lightCubeVAO);
         for (unsigned int i = 0; i < 4; i++)
         {
             glm::mat4 modelLight = glm::mat4(1.0f);
             modelLight = glm::translate(modelLight, pointLightPositions[i]*3.0f*glm::vec3((float)glm::sin(glfwGetTime()), glm::sin(glfwGetTime()*6), glm::cos(glfwGetTime())));
-            modelLight = glm::scale(modelLight, glm::vec3(3.0f)); // Make it a smaller cube
+            modelLight = glm::scale(modelLight, glm::vec3(3.0f));
             lightCubeShader.setMat4("model", modelLight);
-//            glBindTexture(GL_TEXTURE_2D, cubeTexture);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
 
 
 
-        // don't forget to enable cubemapShader before setting uniforms
         modelShader.use();
 
         pointLight.position = programState->modelPosition;
@@ -666,14 +629,12 @@ int main() {
         modelShader.setFloat("pointLight.quadratic", pointLight.quadratic);
         modelShader.setVec3("viewPosition", programState->camera.Position);
         modelShader.setFloat("material.shininess", 32.0f);
-        // view/projection transformations
         projection = glm::perspective(glm::radians(programState->camera.Zoom),
                                                 (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 100.0f);
         view = programState->camera.GetViewMatrix();
         modelShader.setMat4("projection", projection);
         modelShader.setMat4("view", view);
 
-        // render the loaded model
 
         glm::mat4 modelAmongus = glm::mat4(1.0f);
         modelAmongus = glm::translate(modelAmongus, glm::vec3(cos((float)currentFrame/5)*25 ,0.0f, 3.0f)); // translate it down so it's at the center of the scene
@@ -684,13 +645,12 @@ int main() {
 
 
 
-        // draw skybox as last
-        glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+        glDepthFunc(GL_LEQUAL);
         skyboxShader.use();
-        view = glm::mat4(glm::mat3(programState->camera.GetViewMatrix())); // remove translation from the view matrix
+        view = glm::mat4(glm::mat3(programState->camera.GetViewMatrix()));
         skyboxShader.setMat4("view", view);
         skyboxShader.setMat4("projection", projection);
-        // skybox cube
+
         glBindVertexArray(skyboxVAO);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
@@ -702,9 +662,6 @@ int main() {
             DrawImGui(programState);
 
 
-
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -744,26 +701,26 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-// glfw: whenever the mouse moves, this callback is called
+// pri pomeranju misa se poziva ova funkcija
 // -------------------------------------------------------
 void mouse_callback(GLFWwindow *window, double xpos, double ypos) {
-//    if (firstMouse) {
-//        lastX = xpos;
-//        lastY = ypos;
-//        firstMouse = false;
-//    }
-//
-//    float xoffset = xpos - lastX;
-//    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-//
-//    lastX = xpos;
-//    lastY = ypos;
-//
-//    if (programState->CameraMouseMovementUpdateEnabled)
-//        programState->camera.ProcessMouseMovement(xoffset, yoffset);
+    if (firstMouse) {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+    lastX = xpos;
+    lastY = ypos;
+
+    if (programState->CameraMouseMovementUpdateEnabled)
+        programState->camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
-// glfw: whenever the mouse scroll wheel scrolls, this callback is called
+// pri skrolovanju misa se poziva ova funkcija
 // ----------------------------------------------------------------------
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
     programState->camera.ProcessMouseScroll(yoffset);
@@ -853,14 +810,14 @@ unsigned int loadTexture(const char * path)
     return textureID;
 }
 
-// loads a cubemap texture from 6 individual texture faces
-// order:
-// +X (right)
-// -X (left)
-// +Y (top)
-// -Y (bottom)
-// +Z (front)
-// -Z (back)
+// ucitava cubemap teksturu iz 6 uzoraka strana
+// redosled:
+// +X (desno)
+// -X (levo)
+// +Y (gore)
+// -Y (dole)
+// +Z (napred)
+// -Z (nazad)
 // -------------------------------------------------------
 unsigned int loadCubemap(vector<std::string> faces)
 {
