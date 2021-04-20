@@ -169,14 +169,12 @@ int main() {
     glEnable(GL_DEPTH_TEST);
 
     Shader modelShader("resources/shaders/2.model_lighting.vs", "resources/shaders/2.model_lighting.fs");
-//    Shader cubemapShader("resources/shaders/cubemap.vs", "resources/shaders/cubemap.fs");
     Shader lightingShader("resources/shaders/multiple_lights.vs", "resources/shaders/multiple_lights.fs");
     Shader lightCubeShader("resources/shaders/light_cube.vs", "resources/shaders/light_cube.fs");
     Shader skyboxShader("resources/shaders/skybox.vs", "resources/shaders/skybox.fs");
     Shader asteroidShader("resources/shaders/asteroids.vs", "resources/shaders/asteroids.fs");
     Shader geometryShader("resources/shaders/geometry_shader.vs", "resources/shaders/geometry_shader.fs", "resources/shaders/geometry_shader.gs");
 
-    //    Shader planetShader("resources/shaders/planet.vs", "resources/shaders/planet.fs");
 
 
     Model ourModel("resources/objects/amongUsWhite/among us leon.obj");
@@ -330,15 +328,7 @@ int main() {
             -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
             -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
     };
-//    glm::vec3 cubePositions[] = {
-//            glm::vec3( 0.8f,  1.0f,  0.0f),
-//            glm::vec3(-1.5f, -2.2f, -2.5f),
-//            glm::vec3( 1.0f, -1.0f, -2.5f),
-//            glm::vec3( 1.3f, -2.0f, -2.5f),
-//            glm::vec3( 1.5f,  2.0f, -2.5f),
-//            glm::vec3( 1.5f,  0.2f, -1.5f),
-//            glm::vec3(-1.3f,  1.0f, -1.5f)
-//    };
+
     glm::vec3 pointLightPositions[] = {
             glm::vec3( 4.7f,  1.2f,  2.0f),
             glm::vec3( 2.3f, -3.3f, -4.0f),
@@ -368,9 +358,6 @@ int main() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-//    unsigned int diffuseMap = loadTexture(FileSystem::getPath("resources/textures/container.jpg").c_str());
-//    unsigned int specularMap = loadTexture(FileSystem::getPath("resources/textures/container2_specular.png").c_str());
-
     lightingShader.use();
     lightingShader.setInt("material.diffuse", 0);
     lightingShader.setInt("material.specular", 1);
@@ -385,15 +372,8 @@ int main() {
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-//    unsigned int cubeTexture = loadTexture(FileSystem::getPath("resources/textures/container.jpg").c_str());
-//
-//    cubemapShader.use();
-//    cubemapShader.setInt("texture1", 0);
-
     skyboxShader.use();
     skyboxShader.setInt("skybox", 0);
-
-
 
     vector<std::string> faces
             {
@@ -460,8 +440,6 @@ int main() {
             glDrawElementsInstanced(GL_TRIANGLES, rock.meshes[i].indices.size(), GL_UNSIGNED_INT, 0, amount);
             glBindVertexArray(0);
         }
-
-
 
         //svetla
         lightingShader.use();
@@ -532,27 +510,6 @@ int main() {
         model = glm::mat4(1.0f);
         lightingShader.setMat4("model", model);
 
-
-//        glActiveTexture(GL_TEXTURE0);
-//        glBindTexture(GL_TEXTURE_2D, diffuseMap);
-//
-//
-//        glActiveTexture(GL_TEXTURE1);
-//        glBindTexture(GL_TEXTURE_2D, specularMap);
-
-
-//        glBindVertexArray(cubeVAO);
-//        for (unsigned int i = 0; i < 7; i++)
-//        {
-//             glm::mat4 model = glm::mat4(1.0f);
-//            model = glm::translate(model, cubePositions[i]*8.0f);
-//            float angle = 20.0f * i;
-//            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-//            model = glm::scale(model, glm::vec3(4.0f + 3.0f*glm::sin(glfwGetTime())));
-//            lightingShader.setMat4("model", model);
-//
-//            glDrawArrays(GL_TRIANGLES, 0, 36);
-//        }
 
         lightCubeShader.use();
         lightCubeShader.setMat4("projection", projection);
