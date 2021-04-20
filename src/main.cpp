@@ -169,7 +169,7 @@ int main() {
     glEnable(GL_DEPTH_TEST);
 
     Shader modelShader("resources/shaders/2.model_lighting.vs", "resources/shaders/2.model_lighting.fs");
-    Shader cubemapShader("resources/shaders/cubemap.vs", "resources/shaders/cubemap.fs");
+//    Shader cubemapShader("resources/shaders/cubemap.vs", "resources/shaders/cubemap.fs");
     Shader lightingShader("resources/shaders/multiple_lights.vs", "resources/shaders/multiple_lights.fs");
     Shader lightCubeShader("resources/shaders/light_cube.vs", "resources/shaders/light_cube.fs");
     Shader skyboxShader("resources/shaders/skybox.vs", "resources/shaders/skybox.fs");
@@ -412,8 +412,8 @@ int main() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    unsigned int diffuseMap = loadTexture(FileSystem::getPath("resources/textures/container.jpg").c_str());
-    unsigned int specularMap = loadTexture(FileSystem::getPath("resources/textures/container2_specular.png").c_str());
+//    unsigned int diffuseMap = loadTexture(FileSystem::getPath("resources/textures/container.jpg").c_str());
+//    unsigned int specularMap = loadTexture(FileSystem::getPath("resources/textures/container2_specular.png").c_str());
 
     lightingShader.use();
     lightingShader.setInt("material.diffuse", 0);
@@ -477,15 +477,11 @@ int main() {
         glClearColor(programState->clearColor.r, programState->clearColor.g, programState->clearColor.b, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        //asteroidi i planeta
+        //planeta i asteroidi
 
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
         glm::mat4 view = programState->camera.GetViewMatrix();
-        asteroidShader.use();
-        asteroidShader.setMat4("projection", projection);
-        asteroidShader.setMat4("view", view);
-        projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 1.0f, 100.0f);
-        view = programState->camera.GetViewMatrix();;
+
         glm::mat4 model = glm::mat4(1.0f);
         geometryShader.use();
         geometryShader.setMat4("projection", projection);
@@ -497,6 +493,8 @@ int main() {
         planet.Draw(geometryShader);
 
         asteroidShader.use();
+        asteroidShader.setMat4("projection", projection);
+        asteroidShader.setMat4("view", view);
         asteroidShader.setInt("texture_diffuse1", 0);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, rock.textures_loaded[0].id);
@@ -575,16 +573,16 @@ int main() {
         lightingShader.setMat4("view", view);
 
 
-        glm::mat4 model1 = glm::mat4(1.0f);
-        lightingShader.setMat4("model", model1);
+        model = glm::mat4(1.0f);
+        lightingShader.setMat4("model", model);
 
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, diffuseMap);
-
-
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, specularMap);
+//        glActiveTexture(GL_TEXTURE0);
+//        glBindTexture(GL_TEXTURE_2D, diffuseMap);
+//
+//
+//        glActiveTexture(GL_TEXTURE1);
+//        glBindTexture(GL_TEXTURE_2D, specularMap);
 
 
 //        glBindVertexArray(cubeVAO);
@@ -607,10 +605,10 @@ int main() {
         glBindVertexArray(lightCubeVAO);
         for (unsigned int i = 0; i < 4; i++)
         {
-            glm::mat4 modelLight = glm::mat4(1.0f);
-            modelLight = glm::translate(modelLight, pointLightPositions[i]*3.0f*glm::vec3((float)glm::sin(glfwGetTime()), glm::sin(glfwGetTime()*6), glm::cos(glfwGetTime())));
-            modelLight = glm::scale(modelLight, glm::vec3(3.0f));
-            lightCubeShader.setMat4("model", modelLight);
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, pointLightPositions[i]*3.0f*glm::vec3((float)glm::sin(glfwGetTime()), glm::sin(glfwGetTime()*6), glm::cos(glfwGetTime())));
+            model = glm::scale(model, glm::vec3(3.0f));
+            lightCubeShader.setMat4("model", model);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
@@ -636,11 +634,11 @@ int main() {
         modelShader.setMat4("view", view);
 
 
-        glm::mat4 modelAmongus = glm::mat4(1.0f);
-        modelAmongus = glm::translate(modelAmongus, glm::vec3(cos((float)currentFrame/5)*25 ,0.0f, 3.0f)); // translate it down so it's at the center of the scene
-        modelAmongus = glm::rotate(modelAmongus, -(float)glfwGetTime()*2, glm::vec3(0.0f, 0.0f, 1.0f));
-        modelAmongus = glm::scale(modelAmongus, glm::vec3(programState->modelScale));    // it's a bit too big for our scene, so scale it down
-        modelShader.setMat4("model", modelAmongus);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(cos((float)currentFrame/5)*25 ,0.0f, 3.0f));
+        model = glm::rotate(model, -(float)glfwGetTime()*2, glm::vec3(0.0f, 0.0f, 1.0f));
+        model = glm::scale(model, glm::vec3(programState->modelScale));
+        modelShader.setMat4("model", model);
         ourModel.Draw(modelShader);
 
 
